@@ -1,0 +1,41 @@
+body {
+
+}
+
+.inputFile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.plugin {
+  display: flex;
+  align-items: center;
+
+  height: 40px;
+  padding: 3px;
+  border-bottom: 1px solid #b5b5b5;
+}
+
+.inputFile + label {
+  min-width: 300px;
+
+  justify-content: center;
+
+  cursor: pointer;
+
+  @extend .plugin;
+}
+
+.inputFile:focus + label,
+.inputFile + label:hover {
+  background-color: #ebebeb;
+}
+
+.pluginWrapper {
+  @extend .plugin;
+  justify-content: space-between;
+}
