@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "Macro",
+  "description": "Extension for chrome for creating macros.",
+  "version": "2017.1.0.20",
+  "browser_action": {
+    "default_icon": "assets/icon.png",
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content_scripts.js"
+      ]
+    }
+  ],
+  "permissions": [],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "assets/css/*",
+    "assets/js/*",
+    "assets/fonts/*"
+  ]
+}
