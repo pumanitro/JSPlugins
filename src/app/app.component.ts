@@ -7,6 +7,7 @@ import {Component, OnInit} from '@angular/core';
 })
 export class AppComponent implements OnInit{
   title = 'app works!';
+  plugins = [];
 
   handleFiles(event){
 
@@ -36,18 +37,29 @@ export class AppComponent implements OnInit{
 //your code goes here
   };
 
+  getFunctionFromFIle(event){
+    let func;
+    let fileURL = URL.createObjectURL(event.srcElement.files[0]);
+    this.loadJS(fileURL, func, document.body);
+    return func;
+  }
 
   ngOnInit(){
 
-   /* // Check browser support
+    // Check browser support :
     if (typeof(Storage) !== "undefined") {
-      // Store
-      localStorage.setItem("lastname", "Smith");
+
       // Retrieve
-      console.log(localStorage.getItem("lastname"));
+      let pluginFiles = localStorage.getItem("pluginFiles");
+
+      //Fulfill plugins array of funcions :
+      for (let file of pluginFiles) {
+        this.plugins.push(this.getFunctionFromFIle(file));
+      }
+
     } else {
       console.log('NOT SUPORTED');
-    }*/
+    }
 
   }
 }
