@@ -8,14 +8,14 @@ import {Component, OnInit} from '@angular/core';
 export class AppComponent implements OnInit{
   title = 'app works!';
   plugins = [];
+  pluginInputFileEvents = [];
 
   handleFiles(event){
 
-   let fileURL = URL.createObjectURL(event.srcElement.files[0]);
+    this.plugins.push(this.getFunctionFromInputFileEvent(event));
 
-    this.loadJS(fileURL, this.yourCodeToBeCalled, document.body);
-
-    this.yourCodeToBeCalled();
+    this.pluginInputFileEvents.push(event);
+    localStorage.setItem("pluginInputFileEvents", this.pluginInputFileEvents.toString());
 
   }
 
@@ -33,11 +33,7 @@ export class AppComponent implements OnInit{
     location.appendChild(scriptTag);
   };
 
-  yourCodeToBeCalled = function(){
-//your code goes here
-  };
-
-  getFunctionFromFIle(event){
+  getFunctionFromInputFileEvent(event){
     let func;
     let fileURL = URL.createObjectURL(event.srcElement.files[0]);
     this.loadJS(fileURL, func, document.body);
@@ -50,11 +46,11 @@ export class AppComponent implements OnInit{
     if (typeof(Storage) !== "undefined") {
 
       // Retrieve
-      let pluginFiles = localStorage.getItem("pluginFiles");
+      this.pluginInputFileEvents = localStorage.getItem("pluginInputFileEvents").split(",");
 
       //Fulfill plugins array of funcions :
-      for (let file of pluginFiles) {
-        this.plugins.push(this.getFunctionFromFIle(file));
+      for (let inputFileEvent of this.pluginInputFileEvents) {
+        this.plugins.push(this.getFunctionFromInputFileEvent(inputFileEvent));
       }
 
     } else {
