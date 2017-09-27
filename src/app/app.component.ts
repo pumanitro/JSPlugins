@@ -25,8 +25,6 @@ export class AppComponent implements OnInit{
     };
     fr.readAsText(file);
 
-
-
   }
 
   loadJS = function(url, implementationCode, location){
