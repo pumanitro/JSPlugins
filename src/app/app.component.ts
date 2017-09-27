@@ -27,19 +27,29 @@ export class AppComponent implements OnInit{
       this.plugins.push({name: file.name, func: fr.result, isEnabled: false});
 
       this.notConvertedPlugins.push({name: file.name, func: fr.result, isEnabled: false});
-      localStorage.setItem("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
+      this.loadNotConvertedPluginsToLocalStorage();
     };
     fr.readAsText(file);
 
   }
 
-  putPluginsTo(){
+  loadNotConvertedPluginsToLocalStorage(){
     localStorage.setItem("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
   }
 
-  enablePlugin(plugin){
-    plugin.isEnabled = true;
-    localStorage.setItem("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
+  togglePlugin(plugin){
+    plugin.isEnabled = !plugin.isEnabled;
+
+    for (let notConvertedPlugin of this.notConvertedPlugins) {
+      if(notConvertedPlugin.name === plugin.name)
+      {
+        notConvertedPlugin.isEnabled = !notConvertedPlugin.isEnabled;
+        break;
+      }
+    }
+
+    this.loadNotConvertedPluginsToLocalStorage();
+
   }
 
   loadJS = function(url, implementationCode, location){
@@ -60,7 +70,7 @@ export class AppComponent implements OnInit{
     // Check browser support :
     if (typeof(Storage) !== "undefined") {
 
-      let tempFunctionFiles = localStorage.getItem("functionFiles");
+      let tempFunctionFiles = localStorage.getItem("notConvertedPlugins");
 
       // Retrieve
       tempFunctionFiles === null ? this.notConvertedPlugins = [] : this.notConvertedPlugins = JSON.parse(tempFunctionFiles);

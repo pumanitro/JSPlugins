@@ -11,7 +11,7 @@
   <!-- Switch -->
   <div class="switch">
     <label>
-      <input type="checkbox" id={{plugin.name}} [checked]="plugin.isEnabled">
+      <input type="checkbox" id={{plugin.name}} [checked]="plugin.isEnabled" (change)="togglePlugin(plugin)">
       <span class="lever"></span>
     </label>
   </div>
