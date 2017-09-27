@@ -50,6 +50,9 @@ export class AppComponent implements OnInit{
 
     this.loadNotConvertedPluginsToLocalStorage();
 
+    if(plugin.isEnabled)
+      plugin.func();
+
   }
 
   loadJS = function(url, implementationCode, location){
@@ -65,6 +68,13 @@ export class AppComponent implements OnInit{
 
     location.appendChild(scriptTag);
   };
+
+  runAllEnabledPlugins(){
+    for (let plugin of this.plugins) {
+      if(plugin.isEnabled)
+        plugin.func();
+    }
+  }
 
   loadPluginsFromLocalStorage() {
     // Check browser support :
@@ -86,8 +96,7 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(){
-
     this.loadPluginsFromLocalStorage();
-
+    this.runAllEnabledPlugins();
   }
 }
