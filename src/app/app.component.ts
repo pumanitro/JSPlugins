@@ -7,8 +7,8 @@ import {Component, OnInit} from '@angular/core';
 })
 export class AppComponent implements OnInit{
   title = 'app works!';
-  plugins = [];
-  functionFiles = [];
+  plugins: {name: string, func: any}[] = [];
+  functionFiles: {name: string, func: any}[] = [];
 
   handleFiles(event){
 
@@ -18,9 +18,9 @@ export class AppComponent implements OnInit{
     fr.onload = () => {
       // Use `fr.result` here, it's a string containing the text
 
-      this.plugins.push([file.name, () => { eval(fr.result) }]);
+      this.plugins.push({name: file.name, func: () => { eval(fr.result) }});
 
-      this.functionFiles.push([file.name, fr.result]);
+      this.functionFiles.push({name: file.name, func: fr.result});
       localStorage.setItem("functionFiles", JSON.stringify(this.functionFiles));
     };
     fr.readAsText(file);
@@ -51,8 +51,8 @@ export class AppComponent implements OnInit{
       tempFunctionFiles === null ? this.functionFiles = [] : this.functionFiles = JSON.parse(tempFunctionFiles);
 
       //Fulfill plugins array of funcions :
-      for (let [name, functionFile] of this.functionFiles) {
-        this.plugins.push([name, () => { eval(functionFile) }]);
+      for (let functionFile of this.functionFiles) {
+        this.plugins.push({name: functionFile.name, func: () => { eval(functionFile.func) }});
       }
 
     } else {
