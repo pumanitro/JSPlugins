@@ -1,5 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 
+interface  Plugin {
+  name: string;
+  func: any;
+  isEnabled: boolean;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -7,8 +13,8 @@ import {Component, OnInit} from '@angular/core';
 })
 export class AppComponent implements OnInit{
   title = 'app works!';
-  plugins: {name: string, func: any}[] = [];
-  functionFiles: {name: string, func: any}[] = [];
+  plugins: Plugin[] = [];
+  functionFiles: Plugin[] = [];
 
   handleFiles(event){
 
@@ -18,9 +24,9 @@ export class AppComponent implements OnInit{
     fr.onload = () => {
       // Use `fr.result` here, it's a string containing the text
 
-      this.plugins.push({name: file.name, func: () => { eval(fr.result) }});
+      this.plugins.push({name: file.name, func: fr.result, isEnabled: false});
 
-      this.functionFiles.push({name: file.name, func: fr.result});
+      this.functionFiles.push({name: file.name, func: fr.result, isEnabled: false});
       localStorage.setItem("functionFiles", JSON.stringify(this.functionFiles));
     };
     fr.readAsText(file);
@@ -52,7 +58,7 @@ export class AppComponent implements OnInit{
 
       //Fulfill plugins array of funcions :
       for (let functionFile of this.functionFiles) {
-        this.plugins.push({name: functionFile.name, func: () => { eval(functionFile.func) }});
+        this.plugins.push({name: functionFile.name, func: () => { eval(functionFile.func)}, isEnabled: functionFile.isEnabled});
       }
 
     } else {

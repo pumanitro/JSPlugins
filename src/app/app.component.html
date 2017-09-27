@@ -6,12 +6,12 @@
 
 <div *ngFor="let plugin of plugins" class="pluginWrapper">
 
-  Name of extension {{plugin.name}}
+  {{plugin.name}}
 
   <!-- Switch -->
   <div class="switch">
     <label>
-      <input type="checkbox">
+      <input type="checkbox" id={{plugin.name}} checked={{true}}>
       <span class="lever"></span>
     </label>
   </div>
