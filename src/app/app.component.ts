@@ -14,7 +14,7 @@ interface  Plugin {
 export class AppComponent implements OnInit{
   title = 'app works!';
   plugins: Plugin[] = [];
-  functionFiles: Plugin[] = [];
+  notConvertedPlugins: Plugin[] = [];
 
   handleFiles(event){
 
@@ -26,11 +26,20 @@ export class AppComponent implements OnInit{
 
       this.plugins.push({name: file.name, func: fr.result, isEnabled: false});
 
-      this.functionFiles.push({name: file.name, func: fr.result, isEnabled: false});
-      localStorage.setItem("functionFiles", JSON.stringify(this.functionFiles));
+      this.notConvertedPlugins.push({name: file.name, func: fr.result, isEnabled: false});
+      localStorage.setItem("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
     };
     fr.readAsText(file);
 
+  }
+
+  putPluginsTo(){
+    localStorage.setItem("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
+  }
+
+  enablePlugin(plugin){
+    plugin.isEnabled = true;
+    localStorage.setItem("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
   }
 
   loadJS = function(url, implementationCode, location){
@@ -54,11 +63,11 @@ export class AppComponent implements OnInit{
       let tempFunctionFiles = localStorage.getItem("functionFiles");
 
       // Retrieve
-      tempFunctionFiles === null ? this.functionFiles = [] : this.functionFiles = JSON.parse(tempFunctionFiles);
+      tempFunctionFiles === null ? this.notConvertedPlugins = [] : this.notConvertedPlugins = JSON.parse(tempFunctionFiles);
 
       //Fulfill plugins array of funcions :
-      for (let functionFile of this.functionFiles) {
-        this.plugins.push({name: functionFile.name, func: () => { eval(functionFile.func)}, isEnabled: functionFile.isEnabled});
+      for (let notConvertedPlugin of this.notConvertedPlugins) {
+        this.plugins.push({name: notConvertedPlugin.name, func: () => { eval(notConvertedPlugin.func)}, isEnabled: notConvertedPlugin.isEnabled});
       }
 
     } else {
