@@ -8,14 +8,24 @@ import {Component, OnInit} from '@angular/core';
 export class AppComponent implements OnInit{
   title = 'app works!';
   plugins = [];
-  pluginInputFileEvents = [];
+  functionFiles = [];
 
   handleFiles(event){
 
-    this.plugins.push(this.getFunctionFromInputFileEvent(event));
+    let file = event.srcElement.files[0];
 
-    this.pluginInputFileEvents.push(event);
-    localStorage.setItem("pluginInputFileEvents", this.pluginInputFileEvents.toString());
+    let fr = new FileReader();
+    fr.onload = () => {
+      // Use `fr.result` here, it's a string containing the text
+
+      this.plugins.push(() => { eval(fr.result) });
+
+      this.functionFiles.push(fr.result);
+      localStorage.setItem("functionFiles", JSON.stringify(this.functionFiles));
+    };
+    fr.readAsText(file);
+
+
 
   }
 
@@ -33,25 +43,22 @@ export class AppComponent implements OnInit{
     location.appendChild(scriptTag);
   };
 
-  getFunctionFromInputFileEvent(event){
-    let func;
-    let fileURL = URL.createObjectURL(event.srcElement.files[0]);
-    this.loadJS(fileURL, func, document.body);
-    return func;
-  }
-
   ngOnInit(){
 
     // Check browser support :
     if (typeof(Storage) !== "undefined") {
 
+      let tempFunctionFiles = localStorage.getItem("functionFiles");
+
       // Retrieve
-      this.pluginInputFileEvents = localStorage.getItem("pluginInputFileEvents").split(",");
+      tempFunctionFiles === null ? this.functionFiles = [] : this.functionFiles = JSON.parse(tempFunctionFiles);
 
       //Fulfill plugins array of funcions :
-      for (let inputFileEvent of this.pluginInputFileEvents) {
-        this.plugins.push(this.getFunctionFromInputFileEvent(inputFileEvent));
+      for (let functionFile of this.functionFiles) {
+        this.plugins.push(() => { eval(functionFile) });
       }
+
+      this.plugins[0]();
 
     } else {
       console.log('NOT SUPORTED');
