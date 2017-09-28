@@ -1,33 +1,51 @@
-function eventFire(el, etype) {
-    if (el.fireEvent) {
-        el.fireEvent('on' + etype);
-    } else {
-        var evObj = document.createEvent('Events');
-        evObj.initEvent(etype, true, false);
-        el.dispatchEvent(evObj);
+import {Plugin, Constants} from './app/app.component';
+
+let plugins: Plugin[] = [];
+
+let runAllEnabledPlugins = () => {
+  for (let plugin of plugins) {
+    if(plugin.isEnabled)
+      plugin.func();
+  }
+};
+
+let loadPluginsFromStorage = () => {
+
+  chrome.storage.sync.get(Constants.NAME_OF_PLUGINS_IN_STORAGE, (tempFunctionFiles) => {
+    let notConvertedPlugins;
+
+    // Retrieve
+    tempFunctionFiles === null ? notConvertedPlugins = [] : notConvertedPlugins = JSON.parse(tempFunctionFiles);
+
+    //Fulfill plugins array of funcions :
+    for (let notConvertedPlugin of notConvertedPlugins) {
+      plugins.push({name: notConvertedPlugin.name, func: () => { eval(notConvertedPlugin.func)}, isEnabled: notConvertedPlugin.isEnabled});
     }
-}
 
-if (document.location.href === 'http://dbv.dbvictory.eu/login.html') {
-    let logInName = <HTMLInputElement>document.querySelectorAll('[name="account"]')[0];
-    let logInPassword = <HTMLInputElement>document.querySelectorAll('[name="password"]')[0];
+    runAllEnabledPlugins();
+  });
+};
 
-    logInName.value = 'someLogim';
-    logInPassword.value = 'somePwd';
+document.onload = () => {
 
-    let loginForm = <HTMLFormElement>document.getElementById('login_form');
+  loadPluginsFromStorage();
 
-    loginForm.submit();
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+    for (let key in changes) {
+      var storageChange = changes[key];
+      console.log('Storage key "%s" in namespace "%s" changed. ' +
+        'Old value was "%s", new value is "%s".',
+        key,
+        namespace,
+        storageChange.oldValue,
+        storageChange.newValue);
+    }
+  });
 
-}
+  //Todo:
+  onStorageChange :
+    if(plugin.isEnabled)
+      plugin.func();
 
-if (document.location.origin === 'https://www.googlee.pl') {
-    let searchBar = <HTMLInputElement>document.querySelectorAll('[title="Szukaj"]')[0];
+};
 
-    searchBar.value = 'DBV';
-
-    let searchBtn = <HTMLInputElement>document.querySelectorAll('[value="Szukaj w Google"]')[0];
-
-    eventFire(searchBtn, 'click');
-
-}

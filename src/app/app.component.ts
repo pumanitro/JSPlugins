@@ -1,6 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 
-interface  Plugin {
+export const Constants = {
+  NAME_OF_PLUGINS_IN_STORAGE : "notConvertedPlugins"
+};
+
+export interface Plugin {
   name: string;
   func: any;
   isEnabled: boolean;
@@ -12,8 +16,6 @@ interface  Plugin {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  title = 'app works!';
-  plugins: Plugin[] = [];
   notConvertedPlugins: Plugin[] = [];
 
   handleFiles(event){
@@ -24,79 +26,37 @@ export class AppComponent implements OnInit{
     fr.onload = () => {
       // Use `fr.result` here, it's a string containing the text
 
-      this.plugins.push({name: file.name, func: fr.result, isEnabled: false});
-
       this.notConvertedPlugins.push({name: file.name, func: fr.result, isEnabled: false});
-      this.loadNotConvertedPluginsToLocalStorage();
+      this.loadNotConvertedPluginsToStorage();
     };
     fr.readAsText(file);
 
   }
 
-  loadNotConvertedPluginsToLocalStorage(){
-    localStorage.setItem("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
+  loadNotConvertedPluginsToStorage(){
+    chrome.storage.sync.set("notConvertedPlugins", JSON.stringify(this.notConvertedPlugins));
   }
 
   togglePlugin(plugin){
     plugin.isEnabled = !plugin.isEnabled;
 
-    for (let notConvertedPlugin of this.notConvertedPlugins) {
-      if(notConvertedPlugin.name === plugin.name)
-      {
-        notConvertedPlugin.isEnabled = !notConvertedPlugin.isEnabled;
-        break;
-      }
-    }
-
-    this.loadNotConvertedPluginsToLocalStorage();
-
-    if(plugin.isEnabled)
-      plugin.func();
-
+    this.loadNotConvertedPluginsToStorage();
   }
 
-  loadJS = function(url, implementationCode, location){
-    //url is URL of external file, implementationCode is the code
-    //to be called from the file, location is the location to
-    //insert the <script> element
+  loadNotConvertedPluginsFromStorage() {
 
-    var scriptTag:any = document.createElement('script');
-    scriptTag.src = url;
-
-    scriptTag.onload = implementationCode;
-    scriptTag.onreadystatechange = implementationCode;
-
-    location.appendChild(scriptTag);
-  };
-
-  runAllEnabledPlugins(){
-    for (let plugin of this.plugins) {
-      if(plugin.isEnabled)
-        plugin.func();
-    }
-  }
-
-  loadPluginsFromLocalStorage() {
-    // Check browser support :
-    if (typeof(Storage) !== "undefined") {
-
-      let tempFunctionFiles = localStorage.getItem("notConvertedPlugins");
+    chrome.storage.sync.get(Constants.NAME_OF_PLUGINS_IN_STORAGE, (tempFunctionFiles) => {
+      let notConvertedPlugins;
 
       // Retrieve
-      tempFunctionFiles === null ? this.notConvertedPlugins = [] : this.notConvertedPlugins = JSON.parse(tempFunctionFiles);
+      tempFunctionFiles === null ? notConvertedPlugins = [] : notConvertedPlugins = JSON.parse(tempFunctionFiles);
 
-      //Fulfill plugins array of funcions :
-      for (let notConvertedPlugin of this.notConvertedPlugins) {
-        this.plugins.push({name: notConvertedPlugin.name, func: () => { eval(notConvertedPlugin.func)}, isEnabled: notConvertedPlugin.isEnabled});
-      }
-
-    } else {
-      console.log('NOT SUPORTED');
-    }
+    })
   }
 
   ngOnInit(){
-    this.loadPluginsFromLocalStorage();
-    this.runAllEnabledPlugins();
+
+    this.loadNotConvertedPluginsFromStorage();
+
   }
 }
