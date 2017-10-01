@@ -15,7 +15,7 @@ let loadPluginsFromStorage = () => {
     let notConvertedPlugins;
 
     // Retrieve
-    tempFunctionFiles === null ? notConvertedPlugins = [] : notConvertedPlugins = JSON.parse(tempFunctionFiles);
+    tempFunctionFiles === null ? notConvertedPlugins = [] : notConvertedPlugins = JSON.parse(tempFunctionFiles.toString());
 
     //Fulfill plugins array of funcions :
     for (let notConvertedPlugin of notConvertedPlugins) {
@@ -31,21 +31,22 @@ document.onload = () => {
   loadPluginsFromStorage();
 
   chrome.storage.onChanged.addListener(function(changes, namespace) {
+    //Goes through all chagnes :
     for (let key in changes) {
-      var storageChange = changes[key];
-      console.log('Storage key "%s" in namespace "%s" changed. ' +
-        'Old value was "%s", new value is "%s".',
-        key,
-        namespace,
-        storageChange.oldValue,
-        storageChange.newValue);
-    }
-  });
+      // let storageChange = changes[key];
+      // console.log('Storage key "%s" in namespace "%s" changed. ' +
+      //   'Old value was "%s", new value is "%s".',
+      //   key,
+      //   namespace,
+      //   storageChange.oldValue,
+      //   storageChange.newValue);
+      //
+      // let oldNotConvertedPlugins = JSON.parse(storageChange.oldValue);
 
-  //Todo:
-  onStorageChange :
-    if(plugin.isEnabled)
-      plugin.func();
+      loadPluginsFromStorage();
+
+    }
+  })
 
 };
 
