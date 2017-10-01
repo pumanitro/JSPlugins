@@ -1,4 +1,14 @@
-import {Plugin, Constants} from './app/app.component';
+/// <reference path="./../node_modules/@types/chrome/chrome-app.d.ts"/>
+
+export const Constants = {
+  NAME_OF_PLUGINS_IN_STORAGE : "notConvertedPlugins"
+};
+
+interface Plugin {
+  name: string;
+  func: any;
+  isEnabled: boolean;
+}
 
 let plugins: Plugin[] = [];
 
