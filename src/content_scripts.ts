@@ -21,11 +21,14 @@ let runAllEnabledPlugins = () => {
 
 let loadPluginsFromStorage = () => {
 
-  chrome.storage.sync.get(Constants.NAME_OF_PLUGINS_IN_STORAGE, (tempFunctionFiles) => {
+  chrome.storage.local.get(Constants.NAME_OF_PLUGINS_IN_STORAGE, (wholeStore) => {
+
+    let tempFunctionFiles = wholeStore[Constants.NAME_OF_PLUGINS_IN_STORAGE];
+
     let notConvertedPlugins;
 
     // Retrieve
-    tempFunctionFiles === null ? notConvertedPlugins = [] : notConvertedPlugins = JSON.parse(tempFunctionFiles.toString());
+    tempFunctionFiles === null ? notConvertedPlugins = [] : notConvertedPlugins = JSON.parse(tempFunctionFiles);
 
     //Fulfill plugins array of funcions :
     for (let notConvertedPlugin of notConvertedPlugins) {

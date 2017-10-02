@@ -34,7 +34,7 @@ export class AppComponent implements OnInit{
   }
 
   loadNotConvertedPluginsToStorage(){
-    chrome.storage.sync.set({"notConvertedPlugins" : JSON.stringify(this.notConvertedPlugins)});
+    chrome.storage.local.set({"notConvertedPlugins" : JSON.stringify(this.notConvertedPlugins)});
   }
 
   togglePlugin(plugin){
@@ -45,11 +45,14 @@ export class AppComponent implements OnInit{
 
   loadNotConvertedPluginsFromStorage() {
 
-    chrome.storage.sync.get(Constants.NAME_OF_PLUGINS_IN_STORAGE, (tempFunctionFiles) => {
-      let notConvertedPlugins;
+    chrome.storage.local.get(Constants.NAME_OF_PLUGINS_IN_STORAGE, (wholeStorage) => {
+
+      let tempFunctionFiles = wholeStorage[Constants.NAME_OF_PLUGINS_IN_STORAGE];
+
+      console.warn(tempFunctionFiles);
 
       // Retrieve
-      tempFunctionFiles === null ? notConvertedPlugins = [] : notConvertedPlugins = JSON.parse(tempFunctionFiles.toString());
+      tempFunctionFiles === null ? this.notConvertedPlugins = [] : this.notConvertedPlugins = JSON.parse(tempFunctionFiles);
 
     })
   }
