@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Macro",
   "description": "Extension for chrome for creating macros.",
-  "version": "2017.1.2.0",
+  "version": "2017.1.2.2",
   "browser_action": {
     "default_icon": "assets/icon.png",
     "default_popup": "index.html"

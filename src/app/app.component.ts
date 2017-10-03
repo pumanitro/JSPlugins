@@ -16,7 +16,15 @@ export interface Plugin {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  notConvertedPlugins: Plugin[] = [];
+  notConvertedPlugins: Plugin[] = [
+    {name: 'xD', func: () => {} , isEnabled: true}
+  ];
+
+  testAlert = (test) => {
+    console.warn('----');
+    console.warn(test);
+    console.warn('----');
+  };
 
   handleFiles(event){
 
@@ -45,14 +53,34 @@ export class AppComponent implements OnInit{
 
   loadNotConvertedPluginsFromStorage() {
 
+    let self = this;
+
+    this.testAlert(this.notConvertedPlugins);
+
     chrome.storage.local.get(Constants.NAME_OF_PLUGINS_IN_STORAGE, (wholeStorage) => {
 
       let tempFunctionFiles = wholeStorage[Constants.NAME_OF_PLUGINS_IN_STORAGE];
 
-      console.warn(tempFunctionFiles);
+      /*console.warn('Not converted plugins: ');
+      console.warn(self.notConvertedPlugins);
 
-      // Retrieve
-      tempFunctionFiles === null ? this.notConvertedPlugins = [] : this.notConvertedPlugins = JSON.parse(tempFunctionFiles);
+      console.warn('Temp Function Files: ');
+      console.warn(tempFunctionFiles);*/
+
+      let parsedObject = JSON.parse(tempFunctionFiles);
+
+      if(tempFunctionFiles !== null)
+      {
+        for(let key in Object.keys(parsedObject)){
+          self.notConvertedPlugins[key] = parsedObject[key];
+        }
+      }
+
+      /*console.warn('Not converted plugins: ');
+      console.warn(self.notConvertedPlugins);
+
+      console.warn('Temp Function Files: ');
+      console.warn(tempFunctionFiles);*/
 
     })
   }

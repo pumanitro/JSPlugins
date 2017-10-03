@@ -4,15 +4,21 @@
   <i class="material-icons">add</i>
 </label>
 
-<div *ngFor="let plugin of notConvertedPlugins" class="pluginWrapper">
+<div *ngIf="(notConvertedPlugins.length !== 0)">
 
-  {{plugin.name}}
+  {{testAlert(notConvertedPlugins)}}
+  <div *ngFor="let plugin of notConvertedPlugins" class="pluginWrapper">
 
-  <!-- Switch -->
-  <div class="switch">
-    <label>
-      <input type="checkbox" id={{plugin.name}} [checked]="plugin.isEnabled" (change)="togglePlugin(plugin)">
-      <span class="lever"></span>
-    </label>
+    <!--{{testAlert(notConvertedPlugins)}}-->
+    {{plugin.name}}
+
+    <!-- Switch -->
+    <div class="switch">
+      <label>
+        <input type="checkbox" id={{plugin.name}} [checked]="plugin.isEnabled" (change)="togglePlugin(plugin)">
+        <span class="lever"></span>
+      </label>
+    </div>
   </div>
 </div>
+
